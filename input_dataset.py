@@ -5,8 +5,8 @@ import cv2
 import sys
 import math
 import numpy as np
-
-
+import cv2
+import utils 
 
 def miximgprocess( img):
     img = tf.image.resize_images(img, [112,112])
@@ -17,10 +17,6 @@ def miximgprocess( img):
     img = tf.subtract(img,127.5)
     img = tf.div(img,128.0)
     return img
-
-
-
-
 
 
 class TFRecordDataset(object):
@@ -59,7 +55,7 @@ class TFRecordDataset(object):
 
 def read_tfrecord_test():
     demo=TFRecordDataset( )
-    iterator,next_element=demo.generateDataset(tfrecord_path="/home/hanson/work/FaceHeapose_TF/tfrecord_dataset/train.tfrecords",
+    iterator,next_element=demo.generateDataset(tfrecord_path="./tfrecord_dataset/train.tfrecords",
                                                batch_size=64)
     sess = tf.Session()
 
@@ -71,6 +67,12 @@ def read_tfrecord_test():
                 print(binned_labels[0],cont_labels[0])
                 resultimg= images[0]
                 resultimg=cv2.cvtColor(resultimg,cv2.COLOR_RGB2BGR)
+                resultimg = cv2.resize(resultimg, (400,400))
+                #utils.plot_pose_cube(nimg, cont_labels[0], cont_labels[1], cont_labels[2], tdx=None, tdy=None, size=150.)
+                resultimg =resultimg*128.0+127.5
+                resultimg = resultimg.astype(np.uint8)
+                utils.plot_pose_cube(resultimg, cont_labels[0][0], cont_labels[0][1], cont_labels[0][2], tdx=200, tdy=200, size=150.)
+                #utils.draw_axis(resultimg, cont_labels[0][0], cont_labels[0][1], cont_labels[0][2], tdx=200, tdy=200, size = 100)
                 cv2.imshow('test', resultimg)
                 cv2.waitKey(0)
             except tf.errors.OutOfRangeError:

@@ -7,6 +7,7 @@ import PIL.Image
 import numpy as np
 import random
 import datasets
+import utils
 
 
 def tf_int_feature(value):
@@ -44,9 +45,12 @@ def create_example(img, binned_pose,cont_labels):
 
 if __name__ == '__main__':
 
+    total_img_cnt = 0
     with tf.python_io.TFRecordWriter("tfrecord_dataset/train.tfrecords") as writer:
         testdataset = datasets.Pose_300W_LP()
         for img, binned_labels, cont_labels, imgpath in testdataset.generate():
+            total_img_cnt+=1
             img = img.resize((112,112))
             tf_example = create_example(img,binned_labels.tolist(),cont_labels.tolist())
             writer.write(tf_example.SerializeToString())
+    print("total img %d"%total_img_cnt)

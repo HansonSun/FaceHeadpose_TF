@@ -2,9 +2,7 @@ import os
 import numpy as np
 import cv2
 import pandas as pd
-
 from PIL import Image, ImageFilter
-
 import utils
 
 def get_list_from_filenames(file_path):
@@ -57,30 +55,6 @@ class Pose_300W_LP(object):
             yaw   = pose[1] * 180 / np.pi
             roll  = pose[2] * 180 / np.pi
 
-            #blur img
-            #ds = 1 + np.random.randint(0,4) 
-            #original_size = img.size
-            #img = img.resize((int(img.size[0] / ds), int(img.size[1] / ds) ), resample=Image.NEAREST)
-            #img = img.resize((int(original_size[0]), int(original_size[1]) ), resample=Image.NEAREST)
-
-
-            # Flip?
-            rnd = np.random.random_sample()
-            if rnd < 0.5:
-                yaw = -yaw
-                roll = -roll
-                img = img.transpose(Image.FLIP_LEFT_RIGHT)
-
-            # Blur?
-            rnd = np.random.random_sample()
-            if rnd < 0.05:
-                img = img.filter(ImageFilter.BLUR)
-
-            #rotate img
-            #rnd_angle = np.random.uniform(-40,40)
-            #roll=roll-rnd_angle
-            #img=img.rotate(rnd_angle)
-
             # Bin values
             bins = np.array(range(-99, 99, 3))
             binned_pose = np.digitize([yaw, pitch, roll], bins)
@@ -100,5 +74,8 @@ if __name__ == "__main__":
         nimg=np.array(img)
         # print(type(labels))
         # print ("yaw",cont_labels[0],"pitch",cont_labels[1],"row",cont_labels[2])
-        # cv2.imshow("e",nimg)
-        # cv2.waitKey(0) 
+        nimg = cv2.resize(nimg,(400,400))
+        # utils.plot_pose_cube(nimg, cont_labels[0], cont_labels[1], cont_labels[2], tdx=None, tdy=None, size=150.)
+        utils.draw_axis(nimg, cont_labels[0], cont_labels[1], cont_labels[2], tdx=200, tdy=200, size = 100)
+        cv2.imshow("e",nimg)
+        cv2.waitKey(0) 
